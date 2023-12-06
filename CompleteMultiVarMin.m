@@ -8,33 +8,33 @@ alpha_eigen = 1e-4; %amount added to min_eigenvalue to make Hessian +ve def
 alpha_ls = 1e-4; %parameter used in rhs of Armijo condition in line search and Trust region approach 
 
 
-%Define the Extended Rosenbrock Function for n = 2
-syms x1 x2;
-f_rosenbrock = 10*(x2 - x1^2)^2 + (1 - x1)^2;
-
-% f_rosenbrock = -cos(x1) .* cos(x2) .* exp(-((x1 - pi).^2 + (x2 - pi).^2));
-
-
-% Gradient of the Extended Rosenbrock Function
-grad_rosenbrock = gradient(f_rosenbrock, [x1, x2]);
-
-% Hessian of the Extended Rosenbrock Function
-H_rosenbrock = hessian(f_rosenbrock, [x1, x2]);
-
-xf_rosenbrock = [x1,x2];
-
-% Initial guess for the optimization
-x0_rosenbrock = [-1.2; 1];
-% x0_rosenbrock = [0.5; 0.8];
-% x0_rosenbrock = [5; -5];
-% x0_rosenbrock = [100; 100];
-
-x_vals = [x0_rosenbrock];
-f_vals = [];  % Initialize an empty array to store function values
-errors = [];
-
-% Run Rosenbrock
-implementMultiNewtonMin(f_rosenbrock, H_rosenbrock, grad_rosenbrock, xf_rosenbrock, x0_rosenbrock, epsilon, x_vals, errors, max_iter, max_iter_ls, max_iter_tr, alpha_eigen, alpha_ls, f_vals); 
+% %Define the Extended Rosenbrock Function for n = 2
+% syms x1 x2;
+% % f_rosenbrock = 10*(x2 - x1^2)^2 + (1 - x1)^2;
+% 
+% % f_rosenbrock = -cos(x1) .* cos(x2) .* exp(-((x1 - pi).^2 + (x2 - pi).^2));
+% 
+% 
+% % Gradient of the Extended Rosenbrock Function
+% grad_rosenbrock = gradient(f_rosenbrock, [x1, x2]);
+% 
+% % Hessian of the Extended Rosenbrock Function
+% H_rosenbrock = hessian(f_rosenbrock, [x1, x2]);
+% 
+% xf_rosenbrock = [x1,x2];
+% 
+% % Initial guess for the optimization
+% x0_rosenbrock = [-1.2; 1];
+% % x0_rosenbrock = [0.5; 0.8];
+% % x0_rosenbrock = [5; -5];
+% % x0_rosenbrock = [100; 100];
+% 
+% x_vals = [x0_rosenbrock];
+% f_vals = [];  % Initialize an empty array to store function values
+% errors = [];
+% 
+% % Run Rosenbrock
+% implementMultiNewtonMin(f_rosenbrock, H_rosenbrock, grad_rosenbrock, xf_rosenbrock, x0_rosenbrock, epsilon, x_vals, errors, max_iter, max_iter_ls, max_iter_tr, alpha_eigen, alpha_ls, f_vals); 
 
 
 
@@ -67,40 +67,40 @@ implementMultiNewtonMin(f_rosenbrock, H_rosenbrock, grad_rosenbrock, xf_rosenbro
 
 
 
-% %Define the Wood Function for n = 4
-% syms x1 x2 x3 x4;
-% f_wood = 100*(x1^2 - x2)^2 + (x1 - 1)^2 + (x3 - 1)^2 + 90*(x3^2 - x4)^2 + ...
-%           10.1*((x2 - 1)^2 + (x4 - 1)^2) + 19.8*(x2 - 1)*(x4 - 1) ;
-% 
-% % f_wood = (1.5 - x1 * (1 - x2))^2 + (2.25 - x1 * (1 - x2^2))^2 + (2.625 - x1 * (1 - x2^3))^2 + x3^2 + x4^2; %beale function (solution : (3,0.5,0,0)
-% 
-% 
-% % f_wood = sin(x1 * x2) + cos(x3 * x4) + x1^2 * x4 - x2 * x3^2 + ...
-% %     exp(-x1 * x4) + x3 * x2^2 - 5 * x1 * x4 + 3 * x2 * x3 - x1^2 * x3^2 + ...
-% %     2 * x2^2 * x4^2 - 4 * x1 + 3;
-% 
-% % f_wood = x1^2 * x4 - x2 * x3^2 + exp(-x1 * x4);
-% 
-% %Gradient of the Wood Function
-% grad_wood = gradient(f_wood, [x1, x2, x3, x4]);
-% 
-% %Hessian of the Wood Function
-% H_wood = hessian(f_wood, [x1, x2, x3, x4]);
-% 
-% xf_wood = [x1,x2,x3,x4];
-% 
-% %Initial guess for the optimization
-% % x0_wood = [-3; -1; -3; -1];
+%Define the Wood Function for n = 4
+syms x1 x2 x3 x4;
+f_wood = 100*(x1^2 - x2)^2 + (x1 - 1)^2 + (x3 - 1)^2 + 90*(x3^2 - x4)^2 + ...
+          10.1*((x2 - 1)^2 + (x4 - 1)^2) + 19.8*(x2 - 1)*(x4 - 1) ;
+
+% f_wood = (1.5 - x1 * (1 - x2))^2 + (2.25 - x1 * (1 - x2^2))^2 + (2.625 - x1 * (1 - x2^3))^2 + x3^2 + x4^2; %beale function (solution : (3,0.5,0,0)
+
+
+% f_wood = sin(x1 * x2) + cos(x3 * x4) + x1^2 * x4 - x2 * x3^2 + ...
+%     exp(-x1 * x4) + x3 * x2^2 - 5 * x1 * x4 + 3 * x2 * x3 - x1^2 * x3^2 + ...
+%     2 * x2^2 * x4^2 - 4 * x1 + 3;
+
+% f_wood = x1^2 * x4 - x2 * x3^2 + exp(-x1 * x4);
+
+%Gradient of the Wood Function
+grad_wood = gradient(f_wood, [x1, x2, x3, x4]);
+
+%Hessian of the Wood Function
+H_wood = hessian(f_wood, [x1, x2, x3, x4]);
+
+xf_wood = [x1,x2,x3,x4];
+
+%Initial guess for the optimization
+x0_wood = [-3; -1; -3; -1];
 % x0_wood = [0.5; 1.2; -1.3; -0.4];
-% % x0_wood = [10; -10; -6; 15];
-% % x0_wood = [500; -30; -250; 80];
-% 
-% x_vals = [x0_wood];  
-% f_vals = [];  % Initialize an empty array to store function values
-% errors = [];  % Create a list to store the errors
-% 
-% % Run Wood
-% implementMultiNewtonMin(f_wood, H_wood, grad_wood, xf_wood, x0_wood, epsilon, x_vals, errors, max_iter, max_iter_ls, max_iter_tr, alpha_eigen, alpha_ls,f_vals); 
+% x0_wood = [10; -10; -6; 15];
+% x0_wood = [500; -30; -250; 80];
+
+x_vals = [x0_wood];  
+f_vals = [];  % Initialize an empty array to store function values
+errors = [];  % Create a list to store the errors
+
+% Run Wood
+implementMultiNewtonMin(f_wood, H_wood, grad_wood, xf_wood, x0_wood, epsilon, x_vals, errors, max_iter, max_iter_ls, max_iter_tr, alpha_eigen, alpha_ls,f_vals); 
 
 
 function [is_pos_def, eigenvalues] = isSafelyPosDef(H_current)
@@ -384,8 +384,11 @@ end
 
 
 % Function for single Newton's step
-function [x_new,exit_flag,f_x_current] = singleStepMultiNewtonMin(f, Hf, grad_f, x, x_current, max_iter_ls, max_iter_tr, alpha_eigen, alpha_ls)
+function [x_new,exit_flag,f_x_current,iter_ls,iter_tr, stepType] = singleStepMultiNewtonMin(f, Hf, grad_f, x, x_current, max_iter_ls, max_iter_tr, alpha_eigen, alpha_ls)
     exit_flag = false; % Initialize the flag
+    iter_ls = 0;
+    iter_tr = 0;
+
     subsStruct = struct;
 
     for i = 1:length(x)
@@ -411,7 +414,7 @@ function [x_new,exit_flag,f_x_current] = singleStepMultiNewtonMin(f, Hf, grad_f,
 
 
     [x_new, iter_ls] = BacktrackingSearch(f, x, x_current, H_x_current, grad_x_current, alpha_ls, max_iter_ls);
-
+ 
     if iter_ls >= max_iter_ls
 
         [x_new, iter_tr] = TrustRegionDoglegUpdate(f, x, x_current, H_x_current, grad_x_current, alpha_ls, max_iter_tr);
@@ -423,23 +426,47 @@ function [x_new,exit_flag,f_x_current] = singleStepMultiNewtonMin(f, Hf, grad_f,
 
     end
 
+    stepType = ''; % Initialize step type
+
+    if iter_ls == 1 % Condition for Newton step
+        stepType = 'Newton';
+        
+    elseif iter_ls == 2 % Condition for Line Search
+        stepType = 'Line Search';
+        
+    elseif iter_tr > 0 % Condition for Trust Region
+        stepType = 'Trust Region';
+        
+    end
+
 end
 
 
 % Function to implement Newton's method
 function implementMultiNewtonMin(f, Hf, grad_f, xf, x0, epsilon, x_vals, errors, max_iter, max_iter_ls, max_iter_tr, alpha_eigen, alpha_ls, f_vals)
+    stepSummary = containers.Map('KeyType', 'char', 'ValueType', 'int32');
+
     x_current = x0;
     itr = 0;
     err = Inf;
 
+
     while itr < max_iter && err > epsilon
-        [x_new,exit_flag,f_x_current] = singleStepMultiNewtonMin(f, Hf, grad_f, xf, x_current, max_iter_ls, max_iter_tr, alpha_eigen, alpha_ls);
+        [x_new,exit_flag,f_x_current,iter_ls,iter_tr, stepType  ] = singleStepMultiNewtonMin(f, Hf, grad_f, xf, x_current, max_iter_ls, max_iter_tr, alpha_eigen, alpha_ls);
         err = norm(x_new - x_current);
         x_current = x_new;
         x_vals = [x_vals, x_current];
         errors(end+1) = err;  % Add the error to the list
         f_vals(end+1) = f_x_current;
         itr = itr + 1;
+
+        % Update step summary
+        if isKey(stepSummary, stepType)
+            stepSummary(stepType) = stepSummary(stepType) + 1;
+        else
+            stepSummary(stepType) = 1;
+        end
+
         if exit_flag
             break;
         end
@@ -471,4 +498,12 @@ function implementMultiNewtonMin(f, Hf, grad_f, xf, x0, epsilon, x_vals, errors,
     % Print or return the result
     fprintf('The root is approximately:\n');
     disp(x_current);
+
+    % Print the step summary
+    fprintf('\nStep Summary:\n');
+    stepKeys = keys(stepSummary);
+    for i = 1:length(stepKeys)
+        fprintf('Step: %s, Number of Steps: %d\n', stepKeys{i}, stepSummary(stepKeys{i}));
+    end
+
 end
