@@ -207,7 +207,7 @@ function [x_new, iter] = BacktrackingSearch(f, x, x_current, H_x_current, grad_x
             if iter == 1
                 fprintf('Took Newton step with number of subiterations %d\n',iter);
             else
-                fprintf('Took Line Search step with number of subiterations %d\n',iter);
+                fprintf('Took Line Search step with number of subiterations %d\n',iter-1);
             end
 
             break
@@ -386,6 +386,8 @@ end
 % Function for single Newton's step
 function [x_new,exit_flag,f_x_current,iter_ls,iter_tr, stepType] = singleStepMultiNewtonMin(f, Hf, grad_f, x, x_current, max_iter_ls, max_iter_tr, alpha_eigen, alpha_ls)
     exit_flag = false; % Initialize the flag
+    stepType = ''; % Initialize step type
+
     iter_ls = 0;
     iter_tr = 0;
 
@@ -414,10 +416,22 @@ function [x_new,exit_flag,f_x_current,iter_ls,iter_tr, stepType] = singleStepMul
 
 
     [x_new, iter_ls] = BacktrackingSearch(f, x, x_current, H_x_current, grad_x_current, alpha_ls, max_iter_ls);
+
+    if iter_ls == 1 % Condition for Newton step
+        stepType = 'Newton';
+    end
+        
+    if iter_ls >= 2 % Condition for Line Search
+        stepType = 'Line Search';
+    end
  
     if iter_ls >= max_iter_ls
 
         [x_new, iter_tr] = TrustRegionDoglegUpdate(f, x, x_current, H_x_current, grad_x_current, alpha_ls, max_iter_tr);
+
+        if iter_tr > 0 % Condition for Trust Region 
+            stepType = 'Trust Region';    
+        end
 
         if iter_tr >= max_iter_tr
             exit_flag = true;
@@ -426,84 +440,136 @@ function [x_new,exit_flag,f_x_current,iter_ls,iter_tr, stepType] = singleStepMul
 
     end
 
-    stepType = ''; % Initialize step type
-
-    if iter_ls == 1 % Condition for Newton step
-        stepType = 'Newton';
-        
-    elseif iter_ls == 2 % Condition for Line Search
-        stepType = 'Line Search';
-        
-    elseif iter_tr > 0 % Condition for Trust Region
-        stepType = 'Trust Region';
-        
-    end
 
 end
 
 
-% Function to implement Newton's method
 function implementMultiNewtonMin(f, Hf, grad_f, xf, x0, epsilon, x_vals, errors, max_iter, max_iter_ls, max_iter_tr, alpha_eigen, alpha_ls, f_vals)
-    stepSummary = containers.Map('KeyType', 'char', 'ValueType', 'int32');
-
     x_current = x0;
     itr = 0;
     err = Inf;
-
+    stepSummaryInfo = {};  % Initialize an empty cell array to store summary information
 
     while itr < max_iter && err > epsilon
-        [x_new,exit_flag,f_x_current,iter_ls,iter_tr, stepType  ] = singleStepMultiNewtonMin(f, Hf, grad_f, xf, x_current, max_iter_ls, max_iter_tr, alpha_eigen, alpha_ls);
+        [x_new, exit_flag, f_x_current, iter_ls, iter_tr, stepType] = singleStepMultiNewtonMin(f, Hf, grad_f, xf, x_current, max_iter_ls, max_iter_tr, alpha_eigen, alpha_ls);
         err = norm(x_new - x_current);
         x_current = x_new;
         x_vals = [x_vals, x_current];
-        errors(end+1) = err;  % Add the error to the list
+        errors(end+1) = err;  
         f_vals(end+1) = f_x_current;
         itr = itr + 1;
 
-        % Update step summary
-        if isKey(stepSummary, stepType)
-            stepSummary(stepType) = stepSummary(stepType) + 1;
-        else
-            stepSummary(stepType) = 1;
+        % Store step summary information
+        if strcmp(stepType, 'Trust Region') && iter_ls > 0
+            stepSummaryInfo{end+1} = sprintf('Iteration: %d, Step: Line Search, Number of Steps: %d', itr, iter_ls);
+            stepSummaryInfo{end+1} = sprintf('Iteration: %d, Step: Trust Region, Number of Steps: %d', itr, iter_tr);
+        end
+        if strcmp(stepType, 'Line Search') && iter_ls > 0
+            stepSummaryInfo{end+1} = sprintf('Iteration: %d, Step: Line Search, Number of Steps: %d', itr, iter_ls-1);
+        end
+        if strcmp(stepType, 'Newton') && iter_ls > 0
+            stepSummaryInfo{end+1} = sprintf('Iteration: %d, Step: Newton, Number of Steps: %d', itr, iter_ls);
         end
 
         if exit_flag
             break;
         end
     end
-    
-    % Plotting x-values
-    subplot(3,1,1);  % Change to 3 rows, 1 column, 1st subplot
+
+    % Plotting and displaying the root
+    subplot(3,1,1);
     norms = arrayfun(@(idx) norm(x_vals(:, idx)), 1:size(x_vals, 2));
     plot(norms);
     xlabel('Iterations');
     ylabel('Norm of x-values');
     title('Convergence of x-values');
-    
-    % Plotting the logarithm of errors
-    subplot(3,1,2);  % Change to 3 rows, 1 column, 2nd subplot
+
+    subplot(3,1,2);
     plot(log(errors));
     xlabel('Iterations');
     ylabel('log(error)');
     title('Log of Errors');
-    
-    % Plotting the function values
-    subplot(3,1,3);  % Add this for the 3rd subplot
+
+    subplot(3,1,3);
     plot(f_vals);
     xlabel('Iterations');
     ylabel('Function Value');
     title('Function Value over Iterations');
 
-    
-    % Print or return the result
     fprintf('The root is approximately:\n');
     disp(x_current);
 
-    % Print the step summary
+    % Print the step summary after plotting and displaying the root
     fprintf('\nStep Summary:\n');
-    stepKeys = keys(stepSummary);
-    for i = 1:length(stepKeys)
-        fprintf('Step: %s, Number of Steps: %d\n', stepKeys{i}, stepSummary(stepKeys{i}));
+    for i = 1:length(stepSummaryInfo)
+        fprintf('%s\n', stepSummaryInfo{i});
     end
-
 end
+
+
+
+% % Function to implement Newton's method
+% function implementMultiNewtonMin(f, Hf, grad_f, xf, x0, epsilon, x_vals, errors, max_iter, max_iter_ls, max_iter_tr, alpha_eigen, alpha_ls, f_vals)
+%     stepSummary = containers.Map('KeyType', 'char', 'ValueType', 'int32');
+% 
+%     x_current = x0;
+%     itr = 0;
+%     err = Inf;
+% 
+% 
+%     while itr < max_iter && err > epsilon
+%         [x_new,exit_flag,f_x_current,iter_ls,iter_tr, stepType  ] = singleStepMultiNewtonMin(f, Hf, grad_f, xf, x_current, max_iter_ls, max_iter_tr, alpha_eigen, alpha_ls);
+%         err = norm(x_new - x_current);
+%         x_current = x_new;
+%         x_vals = [x_vals, x_current];
+%         errors(end+1) = err;  % Add the error to the list
+%         f_vals(end+1) = f_x_current;
+%         itr = itr + 1;
+% 
+%         % % Update step summary
+%         % if isKey(stepSummary, stepType)
+%         %     stepSummary(stepType) = stepSummary(stepType) + 1;
+%         % else
+%         %     stepSummary(stepType) = 1;
+%         % end
+% 
+%         if exit_flag
+%             break;
+%         end
+%     end
+% 
+%     % Plotting x-values
+%     subplot(3,1,1);  % Change to 3 rows, 1 column, 1st subplot
+%     norms = arrayfun(@(idx) norm(x_vals(:, idx)), 1:size(x_vals, 2));
+%     plot(norms);
+%     xlabel('Iterations');
+%     ylabel('Norm of x-values');
+%     title('Convergence of x-values');
+% 
+%     % Plotting the logarithm of errors
+%     subplot(3,1,2);  % Change to 3 rows, 1 column, 2nd subplot
+%     plot(log(errors));
+%     xlabel('Iterations');
+%     ylabel('log(error)');
+%     title('Log of Errors');
+% 
+%     % Plotting the function values
+%     subplot(3,1,3);  % Add this for the 3rd subplot
+%     plot(f_vals);
+%     xlabel('Iterations');
+%     ylabel('Function Value');
+%     title('Function Value over Iterations');
+% 
+% 
+%     % Print or return the result
+%     fprintf('The root is approximately:\n');
+%     disp(x_current);
+% 
+%     % Print the step summary
+%     fprintf('\nStep Summary:\n');
+%     stepKeys = keys(stepSummary);
+%     for i = 1:length(stepKeys)
+%         fprintf('Step: %s, Number of Steps: %d\n', stepKeys{i}, stepSummary(stepKeys{i}));
+%     end
+% 
+% end
