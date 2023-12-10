@@ -1,48 +1,43 @@
 clc; clear; close all;
  
 epsilon = 1e-4; %Newton min keeps running until the diff. between step updates is less than this (TBD: include function value update epsilon in this)
-max_iter = 2000; %max iterations of Newton min. Function exits even if not convergent beyong this 
+max_iter = 1500; %max iterations of Newton min. Function exits even if not convergent beyong this 
 max_iter_ls = 20; %max number of itrations of line search  
 max_iter_tr = 50; %max number of itrations of trust region 
 alpha_eigen = 1e-4; %amount added to min_eigenvalue to make Hessian +ve def 
 alpha_ls = 1e-4; %parameter used in rhs of Armijo condition in line search and Trust region approach 
 
 
-% %Define the Extended Rosenbrock Function for n = 2
-% syms x1 x2;
-% % f_rosenbrock = 10*(x2 - x1^2)^2 + (1 - x1)^2;
-% 
-% % f_rosenbrock = -cos(x1) .* cos(x2) .* exp(-((x1 - pi).^2 + (x2 - pi).^2));
-% 
-% 
-% % Gradient of the Extended Rosenbrock Function
-% grad_rosenbrock = gradient(f_rosenbrock, [x1, x2]);
-% 
-% % Hessian of the Extended Rosenbrock Function
-% H_rosenbrock = hessian(f_rosenbrock, [x1, x2]);
-% 
-% xf_rosenbrock = [x1,x2];
-% 
-% % Initial guess for the optimization
-% x0_rosenbrock = [-1.2; 1];
-% % x0_rosenbrock = [0.5; 0.8];
-% % x0_rosenbrock = [5; -5];
-% % x0_rosenbrock = [100; 100];
-% 
-% x_vals = [x0_rosenbrock];
-% f_vals = [];  % Initialize an empty array to store function values
-% errors = [];
-% 
-% % Run Rosenbrock
-% implementMultiNewtonMin(f_rosenbrock, H_rosenbrock, grad_rosenbrock, xf_rosenbrock, x0_rosenbrock, epsilon, x_vals, errors, max_iter, max_iter_ls, max_iter_tr, alpha_eigen, alpha_ls, f_vals); 
+%Define the Extended Rosenbrock Function for n = 2
+syms x1 x2;
+f_rosenbrock = 10*(x2 - x1^2)^2 + (1 - x1)^2;
+
+% Gradient of the Extended Rosenbrock Function
+grad_rosenbrock = gradient(f_rosenbrock, [x1, x2]);
+
+% Hessian of the Extended Rosenbrock Function
+H_rosenbrock = hessian(f_rosenbrock, [x1, x2]);
+
+xf_rosenbrock = [x1,x2];
+
+% Initial guess for the optimization
+x0_rosenbrock = -5000*[-1.2; 1];
+% x0_rosenbrock = [0.5; 0.8];
+% x0_rosenbrock = [5; -5];
+% x0_rosenbrock = [100; 100];
+
+x_vals = [x0_rosenbrock];
+f_vals = [];  % Initialize an empty array to store function values
+errors = [];
+
+% Run Rosenbrock
+implementMultiNewtonMin(f_rosenbrock, H_rosenbrock, grad_rosenbrock, xf_rosenbrock, x0_rosenbrock, epsilon, x_vals, errors, max_iter, max_iter_ls, max_iter_tr, alpha_eigen, alpha_ls, f_vals); 
 
 
 
 % % Define the Extended Powell Singular Function for n = 4
 % syms x1 x2 x3 x4;
 % f_powell = (x1 + 10*x2)^2 + 5*(x3 - x4)^2 + (x2 - 2*x3)^4 + 10*(x1 - x4)^4;
-% 
-% % f_powell = sin(x1 * x2) + x1^2 - cos(x3 * x4) + exp(-(x2^2 + x3^2)) + (x4 - x1)^4;
 % 
 % % Gradient of the Extended Powell Singular Function
 % grad_powell = gradient(f_powell, [x1, x2, x3, x4]);
@@ -54,9 +49,9 @@ alpha_ls = 1e-4; %parameter used in rhs of Armijo condition in line search and T
 % 
 % % Initial guess for the optimization
 % % x0_powell = [3; -1; 0; 1];
-% x0_powell = [0.5; 0.6; -0.5; -0.6];
+% % x0_powell = [0.5; 0.6; -0.5; -0.6];
 % % x0_powell = [7; 8; -8; -10];
-% % x0_powell = [50; -    30; -10; 90];
+% x0_powell = [50; -30; -0.0005; 0.009];
 % 
 % x_vals = [x0_powell];  
 % f_vals = [];  % Initialize an empty array to store function values
@@ -67,43 +62,75 @@ alpha_ls = 1e-4; %parameter used in rhs of Armijo condition in line search and T
 
 
 
-%Define the Wood Function for n = 4
-syms x1 x2 x3 x4;
-f_wood = 100*(x1^2 - x2)^2 + (x1 - 1)^2 + (x3 - 1)^2 + 90*(x3^2 - x4)^2 + ...
-          10.1*((x2 - 1)^2 + (x4 - 1)^2) + 19.8*(x2 - 1)*(x4 - 1) ;
-
-% f_wood = (1.5 - x1 * (1 - x2))^2 + (2.25 - x1 * (1 - x2^2))^2 + (2.625 - x1 * (1 - x2^3))^2 + x3^2 + x4^2; %beale function (solution : (3,0.5,0,0)
-
-
-% f_wood = sin(x1 * x2) + cos(x3 * x4) + x1^2 * x4 - x2 * x3^2 + ...
-%     exp(-x1 * x4) + x3 * x2^2 - 5 * x1 * x4 + 3 * x2 * x3 - x1^2 * x3^2 + ...
-%     2 * x2^2 * x4^2 - 4 * x1 + 3;
-
-% f_wood = x1^2 * x4 - x2 * x3^2 + exp(-x1 * x4);
-
-%Gradient of the Wood Function
-grad_wood = gradient(f_wood, [x1, x2, x3, x4]);
-
-%Hessian of the Wood Function
-H_wood = hessian(f_wood, [x1, x2, x3, x4]);
-
-xf_wood = [x1,x2,x3,x4];
-
-%Initial guess for the optimization
-x0_wood = [-3; -1; -3; -1];
-% x0_wood = [0.5; 1.2; -1.3; -0.4];
-% x0_wood = [10; -10; -6; 15];
-% x0_wood = [500; -30; -250; 80];
-
-x_vals = [x0_wood];  
-f_vals = [];  % Initialize an empty array to store function values
-errors = [];  % Create a list to store the errors
-
-% Run Wood
-implementMultiNewtonMin(f_wood, H_wood, grad_wood, xf_wood, x0_wood, epsilon, x_vals, errors, max_iter, max_iter_ls, max_iter_tr, alpha_eigen, alpha_ls,f_vals); 
+% %Define the Wood Function for n = 4
+% syms x1 x2 x3 x4;
+% f_wood = 100*(x1^2 - x2)^2 + (x1 - 1)^2 + (x3 - 1)^2 + 90*(x3^2 - x4)^2 + ...
+%           10.1*((x2 - 1)^2 + (x4 - 1)^2) + 19.8*(x2 - 1)*(x4 - 1) ;
+% 
+% %Gradient of the Wood Function
+% grad_wood = gradient(f_wood, [x1, x2, x3, x4]);
+% 
+% %Hessian of the Wood Function
+% H_wood = hessian(f_wood, [x1, x2, x3, x4]);
+% 
+% xf_wood = [x1,x2,x3,x4];
+% 
+% %Initial guess for the optimization
+% x0_wood = [-3; -1; -3; -1];
+% % x0_wood = [0.5; 1.2; -1.3; -0.4];
+% % x0_wood = [10; -10; -6; 15];
+% % x0_wood = [500; -30; -250; 80];
+% 
+% x_vals = [x0_wood];  
+% f_vals = [];  % Initialize an empty array to store function values
+% errors = [];  % Create a list to store the errors
+% 
+% % Run Wood
+% implementMultiNewtonMin(f_wood, H_wood, grad_wood, xf_wood, x0_wood, epsilon, x_vals, errors, max_iter, max_iter_ls, max_iter_tr, alpha_eigen, alpha_ls,f_vals); 
 
 
-function [is_pos_def, eigenvalues] = isSafelyPosDef(H_current)
+
+% %Define custom Function for n = 4
+% syms x1 x2 x3 x4;
+% 
+% % f_custom = (1.5 - x1 * (1 - x2))^2 + (2.25 - x1 * (1 - x2^2))^2 + (2.625 - x1 * (1 - x2^3))^2 + x3^2 + x4^2; %beale function (solution : (3,0.5,0,0)
+% 
+% % f_custom = -cos(x1) .* cos(x2) .* exp(-((x1 - pi).^2 + (x2 - pi).^2));
+% 
+% % f_custom = sin(x1 * x2) + x1^2 - cos(x3 * x4) + exp(-(x2^2 + x3^2)) + (x4 - x1)^4;
+% 
+% % f_custom = sin(x1 * x2) + cos(x3 * x4) + x1^2 * x4 - x2 * x3^2 + ...
+% %     exp(-x1 * x4) + x3 * x2^2 - 5 * x1 * x4 + 3 * x2 * x3 - x1^2 * x3^2 + ...
+% %     2 * x2^2 * x4^2 - 4 * x1 + 3;
+% 
+% f_custom = x1^2 + (x4-1)^2 + x2^2 + x3^2;
+% 
+% 
+% %Gradient of the custom Function
+% grad_custom = gradient(f_custom, [x1, x2, x3, x4]);
+% 
+% %Hessian of the custom Function
+% H_custom = hessian(f_custom, [x1, x2, x3, x4]);
+% 
+% xf_custom = [x1,x2,x3,x4];
+% 
+% %Initial guess for the optimization
+% x0_custom = [-3; -1; -3; -1];
+% % x0_custom = [0.5; 1.2; -1.3; -0.4];
+% % x0_custom = [10; -10; -6; 15];
+% % x0_custom = [500; -30; -250; 80];
+% 
+% x_vals = [x0_custom];  
+% f_vals = [];  % Initialize an empty array to store function values
+% errors = [];  % Create a list to store the errors
+% 
+% % Run custom function
+% implementMultiNewtonMin(f_custom, H_custom, grad_custom, xf_custom, x0_custom, epsilon, x_vals, errors, max_iter, max_iter_ls, max_iter_tr, alpha_eigen, alpha_ls,f_vals); 
+
+
+
+
+function [is_pos_def, eigenvalues] = isSafelyPosDef(H_current) %returns true if Hessian is positive definite else returns false 
     % Check if H_current is symmetric
     if ~isequal(H_current, H_current')
         is_pos_def = false;
@@ -120,11 +147,11 @@ end
 
 
 
-function lambda_k = quadraticFitting(f_xk, f_dot_xk, f_xkplus)
+function lambda_k = quadraticFitting(f_xk, f_dot_xk, f_xkplus) %fits quadratic polynomial for line search or trust region lambda update 
     lambda_k = -(f_dot_xk)/(2*(f_xkplus-f_xk-f_dot_xk));
 end
 
-function lambda_k_new = cubicFitting(f_xk, f_dot_xk, lambda_prev, lambda_two_prev, f_lprev, f_ltwoprev)
+function lambda_k_new = cubicFitting(f_xk, f_dot_xk, lambda_prev, lambda_two_prev, f_lprev, f_ltwoprev) %fits cubic polynomial for line search lambda update
     % Coefficients
     c = f_dot_xk;
     d = f_xk;
@@ -140,16 +167,9 @@ function lambda_k_new = cubicFitting(f_xk, f_dot_xk, lambda_prev, lambda_two_pre
 
     % Checking for real roots
     discriminant = b^2 - 3*a*c;
-    % if discriminant < 0
-    %     disp('No real roots for cubic equation. Setting lambda_k_new to 0.5*lambda_prev.');
-    %     lambda_k_new = 0.5*lambda_prev;
-    % else
-    %     lambda_k_new = (-b + sqrt(discriminant)) / (3 * a);
-    % end
 
     if discriminant < 0
         % If the discriminant is negative, take the real part of the complex solution
-        % disp('No real roots for cubic equation');
         lambda_k_new = -b / (3*a);
         % fprintf('After cubic fitting lambda_k_new: %f\n', lambda_k_new);
     else
@@ -161,7 +181,7 @@ function lambda_k_new = cubicFitting(f_xk, f_dot_xk, lambda_prev, lambda_two_pre
 end
 
 
-function [x_new, iter] = BacktrackingSearch(f, x, x_current, H_x_current, grad_x_current, alpha, max_iter_ls)
+function [x_new, iter] = BacktrackingSearch(f, x, x_current, H_x_current, grad_x_current, alpha, max_iter_ls)  %performs line search using Armijo condition
     lambda_k = 1; 
     p_k = - H_x_current \ grad_x_current; %Newton direction 
 
@@ -193,32 +213,26 @@ function [x_new, iter] = BacktrackingSearch(f, x, x_current, H_x_current, grad_x
         % Append the computed f_xkplus value to the array
         f_xkplus_values = [f_xkplus_values, f_xkplus];
 
-        % if iter == 2
-        %     fprintf('After quad fitting lhs_comp: %f, rhs_comp: %f\n', lhs_comp, rhs_comp);
-        % end
-
       
-        % fprintf('lhs_comp: %f, rhs_comp: %f\n', lhs_comp, rhs_comp);
+        fprintf('ls fxk: %f, fxkplus: %f\n', f_xk, f_xkplus);
 
 
         if lhs_comp < rhs_comp || iter >= max_iter_ls   %Armijo condition
-            % fprintf('Debug: Currently at iteration %d\n', iter);
 
             if iter == 1
                 fprintf('Took Newton step with number of subiterations %d\n',iter);
+                % disp('\n')
             else
                 fprintf('Took Line Search step with number of subiterations %d\n',iter-1);
             end
 
             break
+
         else
-            % debugMessageNew = 'This is a newww debug message.';
-            % disp(debugMessageNew);
 
             if iter < 3 %we do quadratic fitting until we have lamda_prev and lambda_two_prev
                 if iter >= 2
                     lambda_two_prev = lambda_prev;
-                    % fprintf('After quad fitting two lambda_k: %f, lambda_prev: %f\n, lambda_2prev: %f\n', lambda_k, lambda_prev,lambda_two_prev);
                 end
                 
                 lambda_prev = lambda_k;
@@ -256,19 +270,15 @@ function [x_new, iter] = BacktrackingSearch(f, x, x_current, H_x_current, grad_x
         lambda_k = 0.5*lambda_prev;
     end
 
-    % if iter < max_iter_ls
-    %     x_new = x_current + lambda_k*p_k;
-    % else
-    %     x_new = x_current;
-    % end
-
     x_new = x_current + lambda_k*p_k;
+
+    % x_new = x_current;
    
 
 end
 
 
-function [x_new, iter_tr] = TrustRegionDoglegUpdate(f, x, x_current, H_x_current, grad_x_current, alpha_ls, max_iter_tr)
+function [x_new, iter_tr] = TrustRegionDoglegUpdate(f, x, x_current, H_x_current, grad_x_current, alpha_ls, max_iter_tr) %performs trust region update using double dogleg method
     fprintf('We have entered Trust Region so keep calm and Trust \n');
     s_N = - H_x_current \ grad_x_current; %Newton direction
 
@@ -276,8 +286,6 @@ function [x_new, iter_tr] = TrustRegionDoglegUpdate(f, x, x_current, H_x_current
     lambda_star = (grad_norm^2)/(grad_x_current'*H_x_current*grad_x_current);
 
     delta_current = abs(lambda_star*grad_norm); %we initialize tr radius as length of cauchy step  
-
-    % fprintf('In TR isSafelyPosDef : %f \n', isSafelyPosDef(H_x_current));
 
     gamma_num = grad_norm^4;
     H_x_inv_grad_x = H_x_current \ grad_x_current; % More efficient than using inv()
@@ -358,8 +366,6 @@ function [x_new, iter_tr] = TrustRegionDoglegUpdate(f, x, x_current, H_x_current
                 delta_new = delta_current/10;
             end
 
-            % fprintf('In TR delta_new is: %f\n', delta_new);
-
             % fprintf('In TR delta_curr: %f, delta_new: %f\n', delta_current, delta_new);
 
             delta_current = delta_new;
@@ -375,15 +381,11 @@ function [x_new, iter_tr] = TrustRegionDoglegUpdate(f, x, x_current, H_x_current
         
     end
 
-    % if iter_tr >= max_iter_tr
-    %     x_new = x_current;
-    % end
-
 end
 
 
 
-% Function for single Newton's step
+% Function for single Newton's step (calls LS and TR methods if applicable)
 function [x_new,exit_flag,f_x_current,iter_ls,iter_tr, stepType] = singleStepMultiNewtonMin(f, Hf, grad_f, x, x_current, max_iter_ls, max_iter_tr, alpha_eigen, alpha_ls)
     exit_flag = false; % Initialize the flag
     stepType = ''; % Initialize step type
@@ -424,6 +426,7 @@ function [x_new,exit_flag,f_x_current,iter_ls,iter_tr, stepType] = singleStepMul
     if iter_ls >= 2 % Condition for Line Search
         stepType = 'Line Search';
     end
+
  
     if iter_ls >= max_iter_ls
 
@@ -444,11 +447,14 @@ function [x_new,exit_flag,f_x_current,iter_ls,iter_tr, stepType] = singleStepMul
 end
 
 
+%Main function that implements Multi-variable Newton optimization 
 function implementMultiNewtonMin(f, Hf, grad_f, xf, x0, epsilon, x_vals, errors, max_iter, max_iter_ls, max_iter_tr, alpha_eigen, alpha_ls, f_vals)
     x_current = x0;
     itr = 0;
     err = Inf;
-    stepSummaryInfo = {};  % Initialize an empty cell array to store summary information
+    stepSummaryInfo = {}; %stores information of the type of strategy being used for the summary table displayed at the end 
+    lastStepType = '';
+    lastStepCount = 0;
 
     while itr < max_iter && err > epsilon
         [x_new, exit_flag, f_x_current, iter_ls, iter_tr, stepType] = singleStepMultiNewtonMin(f, Hf, grad_f, xf, x_current, max_iter_ls, max_iter_tr, alpha_eigen, alpha_ls);
@@ -459,21 +465,26 @@ function implementMultiNewtonMin(f, Hf, grad_f, xf, x0, epsilon, x_vals, errors,
         f_vals(end+1) = f_x_current;
         itr = itr + 1;
 
-        % Store step summary information
-        if strcmp(stepType, 'Trust Region') && iter_ls > 0
-            stepSummaryInfo{end+1} = sprintf('Iteration: %d, Step: Line Search, Number of Steps: %d', itr, iter_ls);
-            stepSummaryInfo{end+1} = sprintf('Iteration: %d, Step: Trust Region, Number of Steps: %d', itr, iter_tr);
-        end
-        if strcmp(stepType, 'Line Search') && iter_ls > 0
-            stepSummaryInfo{end+1} = sprintf('Iteration: %d, Step: Line Search, Number of Steps: %d', itr, iter_ls-1);
-        end
-        if strcmp(stepType, 'Newton') && iter_ls > 0
-            stepSummaryInfo{end+1} = sprintf('Iteration: %d, Step: Newton, Number of Steps: %d', itr, iter_ls);
+        % Check if the step type has changed
+        if ~strcmp(lastStepType, stepType)
+            if lastStepCount > 0
+                % Store the previous step summary
+                stepSummaryInfo{end+1} = {lastStepType, lastStepCount};
+            end
+            lastStepType = stepType;
+            lastStepCount = 1;
+        else
+            lastStepCount = lastStepCount + 1;
         end
 
         if exit_flag
             break;
         end
+    end
+
+    % Add the last step type and count
+    if lastStepCount > 0
+        stepSummaryInfo{end+1} = {lastStepType, lastStepCount};
     end
 
     % Plotting and displaying the root
@@ -483,93 +494,33 @@ function implementMultiNewtonMin(f, Hf, grad_f, xf, x0, epsilon, x_vals, errors,
     xlabel('Iterations');
     ylabel('Norm of x-values');
     title('Convergence of x-values');
+    text(itr, norms(itr), sprintf('Exit point coordinates: (%d, %f)', itr, norms(itr)), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'right');
 
     subplot(3,1,2);
-    plot(log(errors));
-    xlabel('Iterations');
-    ylabel('log(error)');
-    title('Log of Errors');
-
-    subplot(3,1,3);
     plot(f_vals);
     xlabel('Iterations');
     ylabel('Function Value');
     title('Function Value over Iterations');
+    text(itr, f_vals(itr), sprintf('Exit point coordinates: (%d, %f)', itr, f_vals(itr)), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'right');
+
+
+    subplot(3,1,3);
+    log_errors = log(errors);
+    plot(log_errors);
+    xlabel('Iterations');
+    ylabel('log(error)');
+    title('Log of Errors');
+    text(itr, log_errors(itr), sprintf('Exit point coordinates: (%d, %f)', itr, log_errors(itr)), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'right');
+
 
     fprintf('The root is approximately:\n');
     disp(x_current);
 
     % Print the step summary after plotting and displaying the root
-    fprintf('\nStep Summary:\n');
+    fprintf('\nSummary Table:\n');
+    fprintf('SNo\tStep Taken\t\t# of Iterations\n');
     for i = 1:length(stepSummaryInfo)
-        fprintf('%s\n', stepSummaryInfo{i});
+        fprintf('%d\t%s\t\t\t%d\n', i, stepSummaryInfo{i}{1}, stepSummaryInfo{i}{2});
     end
 end
 
-
-
-% % Function to implement Newton's method
-% function implementMultiNewtonMin(f, Hf, grad_f, xf, x0, epsilon, x_vals, errors, max_iter, max_iter_ls, max_iter_tr, alpha_eigen, alpha_ls, f_vals)
-%     stepSummary = containers.Map('KeyType', 'char', 'ValueType', 'int32');
-% 
-%     x_current = x0;
-%     itr = 0;
-%     err = Inf;
-% 
-% 
-%     while itr < max_iter && err > epsilon
-%         [x_new,exit_flag,f_x_current,iter_ls,iter_tr, stepType  ] = singleStepMultiNewtonMin(f, Hf, grad_f, xf, x_current, max_iter_ls, max_iter_tr, alpha_eigen, alpha_ls);
-%         err = norm(x_new - x_current);
-%         x_current = x_new;
-%         x_vals = [x_vals, x_current];
-%         errors(end+1) = err;  % Add the error to the list
-%         f_vals(end+1) = f_x_current;
-%         itr = itr + 1;
-% 
-%         % % Update step summary
-%         % if isKey(stepSummary, stepType)
-%         %     stepSummary(stepType) = stepSummary(stepType) + 1;
-%         % else
-%         %     stepSummary(stepType) = 1;
-%         % end
-% 
-%         if exit_flag
-%             break;
-%         end
-%     end
-% 
-%     % Plotting x-values
-%     subplot(3,1,1);  % Change to 3 rows, 1 column, 1st subplot
-%     norms = arrayfun(@(idx) norm(x_vals(:, idx)), 1:size(x_vals, 2));
-%     plot(norms);
-%     xlabel('Iterations');
-%     ylabel('Norm of x-values');
-%     title('Convergence of x-values');
-% 
-%     % Plotting the logarithm of errors
-%     subplot(3,1,2);  % Change to 3 rows, 1 column, 2nd subplot
-%     plot(log(errors));
-%     xlabel('Iterations');
-%     ylabel('log(error)');
-%     title('Log of Errors');
-% 
-%     % Plotting the function values
-%     subplot(3,1,3);  % Add this for the 3rd subplot
-%     plot(f_vals);
-%     xlabel('Iterations');
-%     ylabel('Function Value');
-%     title('Function Value over Iterations');
-% 
-% 
-%     % Print or return the result
-%     fprintf('The root is approximately:\n');
-%     disp(x_current);
-% 
-%     % Print the step summary
-%     fprintf('\nStep Summary:\n');
-%     stepKeys = keys(stepSummary);
-%     for i = 1:length(stepKeys)
-%         fprintf('Step: %s, Number of Steps: %d\n', stepKeys{i}, stepSummary(stepKeys{i}));
-%     end
-% 
-% end
