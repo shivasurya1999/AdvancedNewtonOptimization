@@ -43,3 +43,6 @@
 - **Termination and Output**: Continues until an acceptable step is found or the maximum sub-iteration count is reached.
 
 # Results and Report 
+For detailed results and analysis of the implementation, please refer to the report available at:
+[Advanced Newton Optimization Report](https://github.com/shivasurya1999/AdvancedNewtonOptimization/blob/main/AdvancedNewtonReport.pdf)
+
