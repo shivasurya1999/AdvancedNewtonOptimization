@@ -1,4 +1,4 @@
-# Advanced Newton optimization Implementation
+# Advanced Newton optimization implementation details 
 
 ## Initializations
 
@@ -42,3 +42,4 @@
 - **Iteration and Alpha Condition**: Checks the alpha condition, performs quadratic fitting for radius refinement.
 - **Termination and Output**: Continues until an acceptable step is found or the maximum sub-iteration count is reached.
 
+# Results and Report 
